@@ -1,0 +1,7 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/">
+    <Script file="Localization.lua"/>
+    <Script file="Logger.lua"/>
+    <Script file="History.lua"/>
+    <Script file="Timer.lua"/>
+    <Script file="RaffleHelper.lua"/>
+</Ui>

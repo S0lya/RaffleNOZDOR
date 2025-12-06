@@ -1,0 +1,6 @@
+## Interface: 30300
+## Title: Nozdor Raffle
+## Notes: Аддон для розыгрышей
+## Author: Solya
+## SavedVariables: NozdorRaffleDB, NozdorRaffleLogs, NozdorRaffleHistory
+RaffleHelper.xml
