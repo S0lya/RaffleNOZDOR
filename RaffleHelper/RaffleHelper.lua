@@ -53,11 +53,9 @@ local function Nozdor_ItemNameFromLink(link)
     if not link or type(link) ~= "string" then return nil end
     local name = link:match("%|h%[(.-)%]%|h")
     if name and name ~= "" then return name end
-    local n = GetItemInfo(link)
-    return n
+    return GetItemInfo(link)
 end
 
--- Применять фон при открытии
 hooksecurefunc("ShowUIPanel", function(frame)
     if frame == NozdorRaffleFrame then
         NozdorRaffle_SetFrameBackdrop()
@@ -76,7 +74,6 @@ NozdorRaffleDB = NozdorRaffleDB or {
     hoverFade = false,
 }
 
--- Флаг для отключения спама отладочных сообщений в чат
 NozdorRaffleDebug = false
 local function DebugPrint(msg)
     if NozdorRaffleDebug then print(msg) end
@@ -84,7 +81,6 @@ end
 _loadFrame:RegisterEvent("ADDON_LOADED")
 _loadFrame:SetScript("OnEvent", function(_, evt, name)
     if evt == "ADDON_LOADED" and name == "RaffleHelper" then
-        -- Ensure defaults
         NozdorRaffleDB.keyword = NozdorRaffleDB.keyword or "+"
         NozdorRaffleDB.timer = NozdorRaffleDB.timer or 30
         NozdorRaffleDB.confirmLimit = NozdorRaffleDB.confirmLimit or 60
@@ -92,18 +88,14 @@ _loadFrame:SetScript("OnEvent", function(_, evt, name)
         NozdorRaffleDB.autoReroll = not not NozdorRaffleDB.autoReroll
         NozdorRaffleDB.hoverFade = not not NozdorRaffleDB.hoverFade
 
-        -- Apply to runtime
         NozdorRaffle.keyword = NozdorRaffleDB.keyword
         NozdorRaffle.timer = NozdorRaffleDB.timer
 
         print("[NozdorRaffle] Аддон загружен.")
-        print("Команда /raf [Ключевое слово] для запуска розыгрыша с стандартными параметрами (указанными в окне аддона).")
         print("Команда /rafui для открытия окна.")
-        print("Команда /rafclearhistory для очистки истории выигрышей.")
-        print("Команда /rafdebug on|off включить или выключить режим отладки.")
+        print("Команда /rafclearhistory для очистки истории.")
         if NozdorRaffleFrame then
             NozdorRaffle_SetFrameBackdrop()
-            -- Populate UI if exists
             if NozdorRaffleKeywordBox then NozdorRaffleKeywordBox:SetText(NozdorRaffleDB.keyword or "") end
             if NozdorRaffleDurationBox then NozdorRaffleDurationBox:SetText(tostring(NozdorRaffleDB.timer or 30)) end
             if NozdorRaffleConfirmTimeBox then NozdorRaffleConfirmTimeBox:SetText(tostring(NozdorRaffleDB.confirmLimit or 60)) end
@@ -117,62 +109,59 @@ end)
 
 -- Для WoW 3.3.5a: безопасно устанавливаем фон только если фрейм существует
 function NozdorRaffle_OnFrameLoad(self)
-        if self and self.SetBackdrop then
-            self:SetBackdrop({
-                bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-                edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-                tile = true,
-                tileSize = 16,
-                edgeSize = 16,
-                insets = { left = 4, right = 4, top = 4, bottom = 4 }
-            })
-            self:SetBackdropColor(0, 0, 0, 0.85)
-        end
-        -- Поднять основной фрейм над обычными элементами
-        if self.SetFrameStrata then self:SetFrameStrata("DIALOG") end
-        if self.SetToplevel then self:SetToplevel(true) end
-        if self.SetFrameLevel and self:GetFrameLevel() < 100 then self:SetFrameLevel(100) end
+    if self and self.SetBackdrop then
+        self:SetBackdrop({
+            bgFile = "Interface/Tooltips/UI-Tooltip-Background",
+            edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
+            tile = true,
+            tileSize = 16,
+            edgeSize = 16,
+            insets = { left = 4, right = 4, top = 4, bottom = 4 }
+        })
+        self:SetBackdropColor(0, 0, 0, 0.85)
+    end
+    if self.SetFrameStrata then self:SetFrameStrata("DIALOG") end
+    if self.SetToplevel then self:SetToplevel(true) end
+    if self.SetFrameLevel and self:GetFrameLevel() < 100 then self:SetFrameLevel(100) end
 
-        if not NozdorRaffleTitleFS then
-            local fs = self:CreateFontString("NozdorRaffleTitleFS", "ARTWORK", "GameFontNormalLarge")
-            fs:SetPoint("TOP", self, "TOP", 0, -12)
-            fs:SetText("Розыгрыши Nozdor")
-        end
+    if not NozdorRaffleTitleFS then
+        local fs = self:CreateFontString("NozdorRaffleTitleFS", "ARTWORK", "GameFontNormalLarge")
+        fs:SetPoint("TOP", self, "TOP", 0, -12)
+        fs:SetText("Розыгрыши Nozdor")
+    end
 
-        if not NozdorRaffleTopLeftTimer then
-            local timer = self:CreateFontString("NozdorRaffleTopLeftTimer", "ARTWORK", "GameFontNormal")
-            timer:SetPoint("TOPLEFT", self, "TOPLEFT", 16, -12)
-            timer:SetText("")
-            timer:SetTextColor(1, 0.82, 0, 1)
-        end
+    if not NozdorRaffleTopLeftTimer then
+        local timer = self:CreateFontString("NozdorRaffleTopLeftTimer", "ARTWORK", "GameFontNormal")
+        timer:SetPoint("TOPLEFT", self, "TOPLEFT", 16, -12)
+        timer:SetText("")
+        timer:SetTextColor(1, 0.82, 0, 1)
+    end
 
-        if not NozdorRaffleKeywordLabel then
-            local label = self:CreateFontString("NozdorRaffleKeywordLabel", "ARTWORK", "GameFontNormal")
-            label:SetPoint("TOPLEFT", self, "TOPLEFT", 16, -40)
-            label:SetText("Ключевое слово:")
-        end
+    if not NozdorRaffleKeywordLabel then
+        local label = self:CreateFontString("NozdorRaffleKeywordLabel", "ARTWORK", "GameFontNormal")
+        label:SetPoint("TOPLEFT", self, "TOPLEFT", 16, -40)
+        label:SetText("Ключевое слово:")
+    end
 
-        if not NozdorRaffleKeywordBox then
-            local edit = CreateFrame("EditBox", "NozdorRaffleKeywordBox", self, "InputBoxTemplate")
-            edit:SetSize(120, 20)
-            edit:SetAutoFocus(false)
-            edit:SetMaxLetters(64)
-            edit:SetPoint("LEFT", NozdorRaffleKeywordLabel, "RIGHT", 8, 0)
-            edit:SetText(NozdorRaffleDB.keyword or "")
-            local function saveKeyword(e)
-                local v = e:GetText() or ""
-                -- При потере фокуса или подтверждении пустое поле заменяем на '+'
-                if v == "" then
-                    v = "+"
-                    e:SetText(v)
-                end
-                NozdorRaffleDB.keyword = v
-                NozdorRaffle.keyword = v
+    if not NozdorRaffleKeywordBox then
+        local edit = CreateFrame("EditBox", "NozdorRaffleKeywordBox", self, "InputBoxTemplate")
+        edit:SetSize(120, 20)
+        edit:SetAutoFocus(false)
+        edit:SetMaxLetters(64)
+        edit:SetPoint("LEFT", NozdorRaffleKeywordLabel, "RIGHT", 8, 0)
+        edit:SetText(NozdorRaffleDB.keyword or "")
+        local function saveKeyword(e)
+            local v = e:GetText() or ""
+            if v == "" then
+                v = "+"
+                e:SetText(v)
             end
-            -- Позволяем очищать во время ввода; сохраняем при подтверждении/потере фокуса
-            edit:SetScript("OnEnterPressed", function(e) e:ClearFocus(); saveKeyword(e) end)
-            edit:SetScript("OnEditFocusLost", saveKeyword)
+            NozdorRaffleDB.keyword = v
+            NozdorRaffle.keyword = v
         end
+        edit:SetScript("OnEnterPressed", function(e) e:ClearFocus(); saveKeyword(e) end)
+        edit:SetScript("OnEditFocusLost", saveKeyword)
+    end
 
         -- Поле задержки стрима справа от ключевого слова
         if not NozdorRaffleDelayLabel then
@@ -351,7 +340,6 @@ function NozdorRaffle_OnFrameLoad(self)
             end
         end
 
-        -- Создаём контейнер с фоном
         local container = NozdorRaffleParticipantsFrame
         if not container then
             container = CreateFrame("Frame", "NozdorRaffleParticipantsFrame", self)
@@ -362,12 +350,10 @@ function NozdorRaffle_OnFrameLoad(self)
             bg:SetAllPoints(container)
             bg:SetTexture(0.1, 0.1, 0.1, 0.5)
             
-            -- Создаём ScrollFrame
             local scrollFrame = CreateFrame("ScrollFrame", "NozdorRaffleScrollFrame", container, "UIPanelScrollFrameTemplate")
             scrollFrame:SetPoint("TOPLEFT", container, "TOPLEFT", 5, -5)
             scrollFrame:SetPoint("BOTTOMRIGHT", container, "BOTTOMRIGHT", -28, 5)
             
-            -- Создаём контент для скролла
             local scrollChild = CreateFrame("Frame", nil, scrollFrame)
             scrollChild:SetSize(180, 1)
             scrollFrame:SetScrollChild(scrollChild)
@@ -375,8 +361,7 @@ function NozdorRaffle_OnFrameLoad(self)
             container.scrollFrame = scrollFrame
             container.scrollChild = scrollChild
             container.labels = {}
-            
-            -- Создаём до 300 строк для участников
+
             for i = 1, 300 do
                 local fs = container.scrollChild:CreateFontString(nil, "ARTWORK", "GameFontNormal")
                 fs:SetPoint("TOPLEFT", container.scrollChild, "TOPLEFT", 4, -4 - (i-1)*15)
@@ -385,15 +370,13 @@ function NozdorRaffle_OnFrameLoad(self)
                 table.insert(container.labels, fs)
             end
 
-            -- Кнопка истории: открывает отдельный модуль истории, если есть
+            -- Кнопка истории
             if not NozdorRaffleHistoryButton then
                 local hbtn = CreateFrame("Button", "NozdorRaffleHistoryButton", self, "UIPanelButtonTemplate")
                 hbtn:SetSize(100, 24)
                 if NozdorRaffleClearButton then
-                    -- Плотно слева от "Очистить"
                     hbtn:SetPoint("RIGHT", NozdorRaffleClearButton, "LEFT", -4, 0)
                 else
-                    -- Фолбэк: нижний левый угол, если Очистить ещё не создана
                     hbtn:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", 12, 12)
                 end
                 hbtn:SetText("История")
@@ -404,7 +387,6 @@ function NozdorRaffle_OnFrameLoad(self)
             end
         end
 
-        -- Кнопка очистки справа снизу окна аддона
         if not NozdorRaffleClearButton then
             local c = CreateFrame("Button", "NozdorRaffleClearButton", self, "UIPanelButtonTemplate")
             c:SetSize(100, 24)
