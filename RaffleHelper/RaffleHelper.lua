@@ -163,7 +163,6 @@ function NozdorRaffle_OnFrameLoad(self)
         edit:SetScript("OnEditFocusLost", saveKeyword)
     end
 
-        -- Поле задержки стрима справа от ключевого слова
         if not NozdorRaffleDelayLabel then
             local dlabel2 = self:CreateFontString("NozdorRaffleDelayLabel", "ARTWORK", "GameFontNormal")
             dlabel2:SetPoint("LEFT", NozdorRaffleKeywordBox, "RIGHT", 24, 0)
@@ -222,7 +221,6 @@ function NozdorRaffle_OnFrameLoad(self)
             cbtn:Disable()
         end
 
-        -- Кнопка реролла справа от "Отмена"
         if not NozdorRaffleRerollButton then
             local rbtn = CreateFrame("Button", "NozdorRaffleRerollButton", self, "UIPanelButtonTemplate")
             rbtn:SetSize(80, 22)
@@ -236,7 +234,6 @@ function NozdorRaffle_OnFrameLoad(self)
             end)
         end
 
-        -- Кнопка досрочного завершения справа от "Реролл"
         if not NozdorRaffleFinishButton then
             local fbtn = CreateFrame("Button", "NozdorRaffleFinishButton", self, "UIPanelButtonTemplate")
             fbtn:SetSize(90, 22)
@@ -255,7 +252,6 @@ function NozdorRaffle_OnFrameLoad(self)
             fbtn:Disable()
         end
 
-        -- Выбор приза из инвентаря
         if not NozdorRafflePrizeLabel then
             local prizeLabel = self:CreateFontString("NozdorRafflePrizeLabel", "ARTWORK", "GameFontNormal")
             prizeLabel:SetPoint("TOPLEFT", NozdorRaffleKeywordLabel, "BOTTOMLEFT", 0, -40)
@@ -273,7 +269,6 @@ function NozdorRaffle_OnFrameLoad(self)
             end)
         end
 
-        -- Поле ручного ввода приза справа от кнопки "Выбрать приз"
         if not NozdorRafflePrizeInputLabel then
             local pil = self:CreateFontString("NozdorRafflePrizeInputLabel", "ARTWORK", "GameFontNormal")
             pil:SetPoint("LEFT", NozdorRaffleSelectPrizeButton, "RIGHT", 12, 0)
@@ -326,7 +321,6 @@ function NozdorRaffle_OnFrameLoad(self)
             local plabel = self:CreateFontString("NozdorRaffleParticipantsLabel", "ARTWORK", "GameFontNormal")
             plabel:SetPoint("TOPLEFT", NozdorRaffleDurationLabel, "BOTTOMLEFT", 0, -12)
             plabel:SetText("Участники:")
-            -- Чекбокс сохранения участников
             if not NozdorRaffleKeepParticipantsBox then
                 local cb = CreateFrame("CheckButton", "NozdorRaffleKeepParticipantsBox", self, "UICheckButtonTemplate")
                 cb:SetPoint("LEFT", plabel, "RIGHT", 12, 0)
@@ -396,14 +390,13 @@ function NozdorRaffle_OnFrameLoad(self)
             c:SetScript("OnClick", function()
                 NozdorRaffle_ClearAll()
             end)
-            -- Если кнопка истории уже существует, переанкорить её слева от очистки
             if NozdorRaffleHistoryButton then
                 NozdorRaffleHistoryButton:ClearAllPoints()
                 NozdorRaffleHistoryButton:SetPoint("RIGHT", c, "LEFT", -4, 0)
             end
         end
 
-        -- Панель подтверждения справа
+        -- Панель подтверждения
         if not NozdorRaffleConfirmPanel then
             local panel = CreateFrame("Frame", "NozdorRaffleConfirmPanel", self)
             panel:SetSize(220, 150)
@@ -413,7 +406,6 @@ function NozdorRaffle_OnFrameLoad(self)
             bg2:SetAllPoints(panel)
             bg2:SetTexture(0.1, 0.1, 0.1, 0.4)
 
-            -- Чекбокс авто-реролла над панелью подтверждения
             if not NozdorRaffleAutoRerollBox then
                 local ar = CreateFrame("CheckButton", "NozdorRaffleAutoRerollBox", self, "UICheckButtonTemplate")
                 ar:SetPoint("BOTTOMLEFT", panel, "TOPLEFT", 0, 6)
@@ -447,7 +439,6 @@ function NozdorRaffle_OnFrameLoad(self)
             pl:SetText("Приз: -")
             pl:SetTextColor(1, 0.82, 0)
 
-            -- Поле настройки таймера подтверждения
             local ctLabel = panel:CreateFontString("NozdorRaffleConfirmInputLabel", "ARTWORK", "GameFontNormal")
             ctLabel:SetPoint("TOPLEFT", pl, "BOTTOMLEFT", 0, -10)
             ctLabel:SetText("Лимит (сек):")
@@ -483,7 +474,6 @@ function NozdorRaffle_OnFrameLoad(self)
             wtitle:SetPoint("TOPLEFT", wpanel, "TOPLEFT", 8, -8)
             wtitle:SetText("Последние победители")
 
-            -- ScrollFrame для истории победителей
             local wscroll = CreateFrame("ScrollFrame", "NozdorRaffleWinnersScroll", wpanel, "UIPanelScrollFrameTemplate")
             wscroll:SetPoint("TOPLEFT", wpanel, "TOPLEFT", 5, -28)
             wscroll:SetPoint("BOTTOMRIGHT", wpanel, "BOTTOMRIGHT", -28, 5)
@@ -537,7 +527,6 @@ function NozdorRaffle_OnFrameLoad(self)
             local cb = CreateFrame("CheckButton", "NozdorRaffleHoverFadeBox", self, "UICheckButtonTemplate")
             cb:SetPoint("RIGHT", NozdorRaffleCloseBtn, "LEFT", -6, 0)
             cb:SetChecked(NozdorRaffleDB and NozdorRaffleDB.hoverFade or false)
-            -- Подсказка при наведении
             cb:SetScript("OnEnter", function(self)
                 GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
                 GameTooltip:SetText("Полупрозрачное окно при отсутствии курсора", 1, 1, 1)
